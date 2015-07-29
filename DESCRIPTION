@@ -1,8 +1,8 @@
 Package: Simulations
-Title: What the package does (one line)
+Title: Keeps track of many simulation replications
 Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (one paragraph)
-Depends: R (>= 3.1.0)
-License: What license is it under?
+Authors@R: "Derek Sonderegger <derek.sonderegger@nau.edu> [aut, cre]"
+Description: Manages the file creation of multiple replications of a simulation study so that a simulation can easily be extended to a larger number of replications or to restart an interrupted study. The simulations are run under a parallel processing loop, spreading the simulations across all possible processors. 
+Depends: R (>= 3.1.0), dplyr, stringr, foreach, doParallel
+License: GPL 3
 LazyData: true
