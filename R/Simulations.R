@@ -135,28 +135,23 @@ run.sims <- function( sim.function, param.matrix,
 #' 
 #' Sims <- summarize.sims(Summary.Function, Params)
 #' @export
-summarize.sims <- function(summary.function, Params=NULL, 
+summarize.sims <- function(summary.function, Params, 
         sim.directory='./sim_directory', ...){
-	files <- dir(path=sim.directory)
-	num.sims <- max(get.sim.number(files))
-	num.reps <- max(get.rep.number(files))
+	files <- as.character( dir(path=sim.directory) )
+	files <- data.frame(file = files,
+	                    sim = get.sim.number(files),
+	                    rep = get.rep.number(files))
+	files <- files %>% arrange(sim, rep)
+	
 	out <- list()
-	for(i in 1:num.sims){
-		out[[i]] <- data.frame()
-		for(j in 1:num.reps){
-			load(paste(sim.directory,'/sim',i,'rep',j,'.RData', sep=''))
-      if(is.null(Params)){
-        temp <- summary.function(sim)
-#        temp <- summary.function(sim, ...)
-      }else{
-        temp1 <- summary.function(sim, Params[i,]     )
-#        temp1 <- summary.function(sim, Params[i,], ...)
-        temp <- cbind( do.call(rbind, replicate(nrow(temp1), Params[i,], simplify = FALSE)),
-                       temp1 )
-      }
-			out[[i]]  <- rbind(out[[i]], temp)
-		} 
-    colnames(out[[i]]) <- names(temp)
+	for(k in 1:nrow(files)){
+	  i <- files$sim[k]
+	  j <- files$rep[k]
+		load(paste(sim.directory,'/sim',i,'rep',j,'.RData', sep=''))
+		temp1 <- summary.function(sim)
+		temp2 <- cbind( do.call(rbind, replicate(nrow(temp1), Params[i,], simplify = FALSE)),
+		                 temp1 )
+		out[[k]] <- temp2  
 	}
 	return( rbind_all(out) )
 }
